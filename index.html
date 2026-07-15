@@ -58,7 +58,6 @@
     <input id="birthYear" type="number" value="2001" min="1950" max="2004" placeholder="年份" onkeypress="if(event.key==='Enter')calc()">
     <button class="btn" onclick="calc()">計算</button>
   </div>
-  <div class="tags" id="quickBtns"></div>
   <div class="funds" id="funds" style="display:none">
     <button data-rate="3">🛡️ 保守<span class="sub">貨幣基金 ~3%</span></button>
     <button data-rate="6" class="on">⚖️ 均衡<span class="sub">均衡基金 ~6%</span></button>
@@ -183,17 +182,6 @@ document.addEventListener('click', e => {
   if (document.getElementById('result').style.display!=='none') calc();
 });
 
-(function(){
-  const ps = [2004,2001,2000,1998,1996,1990,1988,1980,1974,1970,1965];
-  const el = document.getElementById('quickBtns');
-  ps.forEach(y=>{
-    const b=document.createElement('button');
-    b.textContent=`${y} 年（${2026-y} 歲）`;
-    b.onclick=()=>{ document.getElementById('birthYear').value=y; calc(); };
-    if (y===2001) b.classList.add('on');
-    el.appendChild(b);
-  });
-})();
 
 calc();
 </script>
