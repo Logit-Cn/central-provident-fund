@@ -134,6 +134,13 @@ function calc() {
   }
 
   let prow = '';
+  if (to65 <= 0) {
+    prow = `<tr><td colspan="4" style="text-align:center;color:#888;padding:20px">已超過 65 歲退休年齡，不再有政府注資。<br>以下為現有餘額的複利增長（不含新供款）</td></tr>`;
+    const n = 5; const ta = age+n;
+    const vg = Math.round(bal * 1.02**n);
+    const vf = Math.round(bal * (1+fr)**n);
+    prow += `<tr><td><strong>${n} 年後（${ta} 歲）</strong></td><td>$${fm(vg)}</td><td style="color:var(--green);font-weight:700">$${fm(vf)}</td><td style="color:var(--red);font-weight:700">+$${fm(vf-vg)}</td></tr>`;
+  } else {
   for (const n of yrs) {
     const ta = age+n;
     const lab = ta>=65 ? `${n} 年後（65 歲退休）` : `${n} 年後（${ta} 歲）`;
@@ -141,10 +148,13 @@ function calc() {
     const vg = fv(bal, 0.02, n, w);
     const vf = fv(bal, fr, n, w);
     prow += `<tr class="${ta>=65?'hl':''}"><td><strong>${lab}</strong></td><td>$${fm(vg)}</td><td style="color:var(--green);font-weight:700">$${fm(vf)}</td><td style="color:var(--red);font-weight:700">+$${fm(vf-vg)}</td></tr>`;
-  }
+  }} // close for loop + else block
 
-  const g65 = fv(bal, 0.02, to65, ct);
-  const f65 = fv(bal, fr, to65, ct);
+  const g65 = to65>0 ? fv(bal, 0.02, to65, ct) : bal;
+  const f65 = to65>0 ? fv(bal, fr, to65, ct) : bal;
+  const cta65 = to65>0
+    ? `🏖️ <strong>65 歲退休時</strong><br>留在政府：<strong>$${fm(g65)}</strong> &nbsp;|&nbsp; 轉入基金 ${fp}%：<strong style="color:var(--green);">$${fm(f65)}</strong><br><span style="font-size:1.1em;color:var(--red);">同一筆錢，什麼都不用做，差 <strong>$${fm(f65-g65)}</strong></span>`
+    : `🏖️ <strong>已超過 65 歲</strong> · 不再有政府注資<br>現有餘額仍可轉入基金，享受複利增長`;
 
   document.getElementById('result').style.display = 'block';
   document.getElementById('result').innerHTML = `
@@ -160,11 +170,7 @@ function calc() {
     <div class="funds" id="funds2" style="margin:0 0 12px"></div>
     <p style="color:#888;font-size:0.84em;margin-bottom:8px">假設政府繼續每年注資 $7,000</p>
     <div class="tblwrap"><table><tr><th>節點</th><th>留在政府 2%</th><th>轉入基金 ${fp}%</th><th>差額</th></tr>${prow}</table></div>
-    <div class="cta">
-      🏖️ <strong>65 歲退休時</strong><br>
-      留在政府：<strong>$${fm(g65)}</strong> &nbsp;|&nbsp; 轉入基金 ${fp}%：<strong style="color:var(--green);">$${fm(f65)}</strong><br>
-      <span style="font-size:1.1em;color:var(--red);">同一筆錢，什麼都不用做，差 <strong>$${fm(f65-g65)}</strong></span>
-    </div>
+    <div class="cta">${cta65}</div>
     <p class="note">⚠️ 同一筆政府注資，同一個帳戶餘額——只差一個「放在哪裡」的選擇。基金回報為非保證，歷史數據僅供參考。</p>`;
 
   // clone fund buttons into result area (the real one stays at top as data source)
