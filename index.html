@@ -100,7 +100,7 @@ function calc() {
 
   let prin=0, intt=0, bal=0, hist='', ec=0, first=false;
   for (const [yr,amt,note] of INJ) {
-    if (yr-by < 22) continue;
+    if (yr-by < 22 || yr-by >= 65) continue;
     ec++;
     let act=amt, dsp=note;
     if (!first && amt>0) { act=10000; dsp="🎁 首次注資（啟動金 $10,000）"; first=true; }
